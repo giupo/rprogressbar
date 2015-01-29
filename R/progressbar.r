@@ -136,7 +136,7 @@ setMethod(
     x@value  <- value
     min <- x@min
     if(value == min) {
-      .Object@time <- Sys.time()
+      x@time <- Sys.time()
     }    
     max <- x@max
     char <- x@char
