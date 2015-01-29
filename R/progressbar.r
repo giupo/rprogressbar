@@ -1,14 +1,20 @@
+#' gets the current screen width.
+#'
+#' It's highly OS specific, I do ignore if it works on OSX
+
 getConsoleWidth <- function() {
-  if ( .Platform$OS.type == "unix") {
-    return(as.numeric(system('tput cols', intern=TRUE)))
+  os <- .Platform$OS.type
+  if ( os  %in% c("unix", "Darwin" )) {
+    as.numeric(system('tput cols', intern=TRUE))
   } else {
     return(tryCatch({
       txt <- system('cmd /c "mode con /status | grep  \"Colonne:\"',
                     intern=TRUE)
       txt <- unlist(strsplit(txt, ":"))[2]
-      return(as.numeric(txt))
+      as.numeric(txt)
     }, error = function (err) {
-      return(80)
+      ## please God forgive me
+      80
     }))
   }
 }
@@ -19,11 +25,12 @@ getConsoleWidth <- function() {
 #' @rdname ProgressBar
 #' @aliases ProgressBar-class
 #' @title ProgressBar with labels
-#' @param ... don't know if used
 #' @slot value current value 
 #' @slot min minimum value
 #' @slot max maximum value
 #' @slot char char to use as token for progress
+#' @slot width current screen width, autoevaluated
+#' @slot time time since the beginning of ProgressBar
 #' @exportClass ProgressBar
 #' @export ProgressBar
 #' @import methods
@@ -51,31 +58,31 @@ setMethod(
     return(.Object)
   })
 
-setGeneric(
-  "kill",
-  function(x){
-    standardGeneric("kill")
-  })
-
 #' Kills current ProgressBar.
 #'
 #' @name kill
 #' @usage kill(x)
 #' @param x `ProgressBar` instance
 #' @export
+#' @docType methods
+#' @rdname kill-methods
 
+
+
+setGeneric(
+  "kill",
+  function(x){
+    standardGeneric("kill")
+  })
+
+#' @rdname kill-methods
+#' @aliases kill,ProgressBar-method
 setMethod(
   "kill",
   signature("ProgressBar"),
   function(x) {
     cat("\n", file = stderr())
     flush.console()
-  })
-
-setGeneric(
-  "update",
-  function(x, value, label="") {
-    standardGeneric("update")
   })
 
 #' Updates `ProgressBar` with `value`
@@ -86,18 +93,32 @@ setGeneric(
 #' `ProgressBar` tries to evaluate an ETA and prints it.
 #' 
 #' @name update
-#' @usage update(x, value)
-#' @usage upodate(x, value label)
+#' @usage update(x, value, label)
 #' @param x `ProgressBar` instance
 #' @param value current state of the `ProgressBar` to be updated
 #' @param label optional label to be printed with the `ProgressBar`, defaults
 #'        to empty string ("")
+#' @docType methods
+#' @rdname update-methods
 #' @export
+
+setGeneric(
+  "update",
+  function(x, value, label="") {
+    standardGeneric("update")
+  })
+
+#' @rdname update-methods
+#' @aliases update,ProgressBar,ANY-method
 
 setMethod(
   "update",
   signature("ProgressBar", "ANY"),
   function(x, value, label="") {
+    if(value == min) {
+      .Object@time <- Sys.time()
+    }
+    
     x@value  <- value
     min <- x@min
     max <- x@max

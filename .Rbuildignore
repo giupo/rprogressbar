@@ -1,0 +1,17 @@
+Makefile
+^build\.xml
+^autotest.r
+.Rhistory
+scent.py
+^dist/*
+./.git/*
+.gitignore
+rcf.Rcheck/*
+..Rcheck/*
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.bumpversion\.cfg
+\.tar\.gz$
+scripts
+^lib_mgt.r
+^packrat/
