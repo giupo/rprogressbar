@@ -3,6 +3,7 @@
 \docType{methods}
 \name{kill}
 \alias{kill}
+\alias{kill,ProgressBar-method}
 \title{Kills current ProgressBar.}
 \usage{
 kill(x)

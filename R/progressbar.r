@@ -74,9 +74,14 @@ setGeneric(
   function(x){
     standardGeneric("kill")
   })
-
-#' @rdname kill-methods
+#' Kills current ProgressBar.
+#'
+#' @name kill
+#' @usage kill(x)
+#' @param x `ProgressBar` instance
+#' @export
 #' @aliases kill,ProgressBar-method
+
 setMethod(
   "kill",
   signature("ProgressBar"),
@@ -107,20 +112,32 @@ setGeneric(
   function(x, value, label="") {
     standardGeneric("update")
   })
-
-#' @rdname update-methods
+#' Updates `ProgressBar` with `value`
+#'
+#' `value` has to `min<= value <= max` with `min` and `max` values
+#' of the slots
+#'
+#' `ProgressBar` tries to evaluate an ETA and prints it.
+#' 
+#' @name update
+#' @usage update(x, value, label)
+#' @param x `ProgressBar` instance
+#' @param value current state of the `ProgressBar` to be updated
+#' @param label optional label to be printed with the `ProgressBar`, defaults
+#'        to empty string ("")
+#' @export
+#' @rdname update
 #' @aliases update,ProgressBar,ANY-method
 
 setMethod(
   "update",
   signature("ProgressBar", "ANY"),
-  function(x, value, label="") {
-    if(value == min) {
-      .Object@time <- Sys.time()
-    }
-    
+  function(x, value, label="") {    
     x@value  <- value
     min <- x@min
+    if(value == min) {
+      .Object@time <- Sys.time()
+    }    
     max <- x@max
     char <- x@char
     elapsed <- as.numeric(difftime(Sys.time(),  x@time, units="secs"))

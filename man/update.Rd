@@ -3,6 +3,7 @@
 \docType{methods}
 \name{update}
 \alias{update}
+\alias{update,ProgressBar,ANY-method}
 \title{Updates `ProgressBar` with `value`}
 \usage{
 update(x, value, label)
