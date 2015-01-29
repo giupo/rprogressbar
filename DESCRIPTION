@@ -1,6 +1,6 @@
 Package: rprogressbar
 Title: Provides a very basic S4 class for a console progressbar
-Version: 0.0.3
+Version: 0.0.4
 Authors@R: "Giuseppe Acito <giuseppe.acito@gmail.com> [aut, cre]"
 Description: This package provides a basic progress bar with an ETA and a label
 Depends: 
