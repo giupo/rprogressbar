@@ -3,19 +3,24 @@
 #' It's highly OS specific, I do ignore if it works on OSX
 
 getConsoleWidth <- function() {
-  os <- .Platform$OS.type
-  if ( os  %in% c("unix", "Darwin" )) {
-    as.numeric(system('tput cols', intern=TRUE))
+  width <- getOption("width", NULL)
+  if(is.numeric(width)) {
+    width
   } else {
-    return(tryCatch({
-      txt <- system('cmd /c "mode con /status | grep  \"Colonne:\"',
-                    intern=TRUE)
-      txt <- unlist(strsplit(txt, ":"))[2]
-      as.numeric(txt)
-    }, error = function (err) {
-      ## please God forgive me
-      80
-    }))
+    os <- .Platform$OS.type  
+    if ( os  %in% c("unix", "Darwin" )) {
+      as.numeric(system('tput cols', intern=TRUE))
+    } else {
+      return(tryCatch({
+        txt <- system('cmd /c "mode con /status | grep  \"Colonne:\"',
+                      intern=TRUE)
+        txt <- unlist(strsplit(txt, ":"))[2]
+        as.numeric(txt)
+      }, error = function (err) {
+        ## please God forgive me
+        80
+      }))
+    }
   }
 }
 
