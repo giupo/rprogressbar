@@ -72,13 +72,13 @@ setMethod(
 #' @docType methods
 #' @rdname kill-methods
 
-
-
 setGeneric(
   "kill",
   function(x){
     standardGeneric("kill")
   })
+
+
 #' Kills current ProgressBar.
 #'
 #' @name kill
@@ -102,6 +102,30 @@ setMethod(
 #'
 #' `ProgressBar` tries to evaluate an ETA and prints it.
 #' 
+#' @name updateProgressBar
+#' @usage updateProgressBar(x, value, label)
+#' @param x `ProgressBar` instance
+#' @param value current state of the `ProgressBar` to be updated
+#' @param label optional label to be printed with the `ProgressBar`, defaults
+#'        to empty string ("")
+#' @docType methods
+#' @rdname updateProgressBar-methods
+#' @export
+
+setGeneric(
+  "updateProgressBar",
+  function(x, value, label="") {
+    standardGeneric("updateProgressBar")
+  })
+
+
+#' Updates `ProgressBar` with `value`
+#'
+#' `value` has to `min<= value <= max` with `min` and `max` values
+#' of the slots
+#'
+#' `ProgressBar` tries to evaluate an ETA and prints it.
+#' 
 #' @name update
 #' @usage update(x, value, label)
 #' @param x `ProgressBar` instance
@@ -117,6 +141,55 @@ setGeneric(
   function(x, value, label="") {
     standardGeneric("update")
   })
+
+
+.update <- function(x, value, label="") {
+  x@value  <- value
+  min <- x@min
+  if(value == min) {
+    x@time <- Sys.time()
+  }    
+  max <- x@max
+  char <- x@char
+  elapsed <- as.numeric(difftime(Sys.time(),  x@time, units="secs"))
+  V <- value/elapsed
+  eta <- (max - value) / V
+  eta <- if(value == min) {
+    "--:--"
+  } else if(eta > 3600) {
+    sprintf("%02i:%02i:%02i", as.integer(floor(eta/3600)),
+            as.integer(floor((eta/60) %% 60)),
+            as.integer(floor(eta %% 60)))
+  } else {
+    sprintf("%02i:%02i", as.integer(floor((eta/60) %% 60)),
+            as.integer(floor(eta %% 60)))
+  }
+  
+  if (!is.finite(value) || value < min || value > max)
+    return()
+  
+  nw <- nchar(char,"w")
+  pad <- 12 + nchar(eta)
+  nlabel <- nchar(label)
+  width <- trunc(x@width/nw) - pad - nlabel
+  nb <- round(width * (value - min)/(max - min))
+  pc <- round(100 * (value - min)/(max - min))
+  if(nlabel > 0) {
+    cat(paste(c("\r |", rep.int(char, nb),
+                  rep.int(" ", nw * (width - nb)),
+                sprintf("| %3d%% - %s %s", pc, label, eta)), collapse = ""),
+        file = stderr())
+  } else {
+    cat(paste(c("\r |", rep.int(char, nb),
+                rep.int(" ", nw * (width - nb)),
+                sprintf("| %3d%% %s", pc, eta)), collapse = ""),
+        file = stderr())
+    
+  }
+  flush.console()
+  invisible(x)  
+}
+
 #' Updates `ProgressBar` with `value`
 #'
 #' `value` has to `min<= value <= max` with `min` and `max` values
@@ -137,49 +210,31 @@ setGeneric(
 setMethod(
   "update",
   signature("ProgressBar", "ANY"),
-  function(x, value, label="") {    
-    x@value  <- value
-    min <- x@min
-    if(value == min) {
-      x@time <- Sys.time()
-    }    
-    max <- x@max
-    char <- x@char
-    elapsed <- as.numeric(difftime(Sys.time(),  x@time, units="secs"))
-    V <- value/elapsed
-    eta <- (max - value) / V
-    eta <- if(value == min) {
-      "--:--"
-    } else if(eta > 3600) {
-      sprintf("%02i:%02i:%02i", as.integer(floor(eta/3600)),
-              as.integer(floor((eta/60) %% 60)),
-              as.integer(floor(eta %% 60)))
-    } else {
-      sprintf("%02i:%02i", as.integer(floor((eta/60) %% 60)),
-              as.integer(floor(eta %% 60)))
-    }
-    
-    if (!is.finite(value) || value < min || value > max)
-      return()
-    
-    nw <- nchar(char,"w")
-    pad <- 12 + nchar(eta)
-    nlabel <- nchar(label)
-    width <- trunc(x@width/nw) - pad - nlabel
-    nb <- round(width * (value - min)/(max - min))
-    pc <- round(100 * (value - min)/(max - min))
-    if(nlabel > 0) {
-      cat(paste(c("\r |", rep.int(char, nb),
-                  rep.int(" ", nw * (width - nb)),
-                  sprintf("| %3d%% - %s %s", pc, label, eta)), collapse = ""),
-          file = stderr())
-    } else {
-      cat(paste(c("\r |", rep.int(char, nb),
-                  rep.int(" ", nw * (width - nb)),
-                  sprintf("| %3d%% %s", pc, eta)), collapse = ""),
-          file = stderr())
-      
-    }
-    flush.console()
-    invisible(x)
+  function(x, value, label="") {
+    .update(x, value, label)
+  })
+
+
+#' Updates `ProgressBar` with `value`
+#'
+#' `value` has to `min<= value <= max` with `min` and `max` values
+#' of the slots
+#'
+#' `ProgressBar` tries to evaluate an ETA and prints it.
+#' 
+#' @name updateProgressBar
+#' @usage updateProgressBar(x, value, label)
+#' @param x `ProgressBar` instance
+#' @param value current state of the `ProgressBar` to be updated
+#' @param label optional label to be printed with the `ProgressBar`, defaults
+#'        to empty string ("")
+#' @export
+#' @rdname updateProgressBar
+#' @aliases updateProgressBar,ProgressBar,ANY-method
+
+setMethod(
+  "updateProgressBar",
+  signature("ProgressBar", "ANY"),
+  function(x, value, label="") {
+    .update(x, value, label)
   })
