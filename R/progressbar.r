@@ -38,7 +38,7 @@ getConsoleWidth <- function() {
 #' @slot time time since the beginning of ProgressBar
 #' @exportClass ProgressBar
 #' @export ProgressBar
-#' @import methods
+#' @import methods rstudioapi tcltk
 
 ProgressBar <- setClass(
   "ProgressBar",
@@ -48,6 +48,8 @@ ProgressBar <- setClass(
     max="numeric",
     char="character",
     width="numeric",
+    isrstudio="logical",
+    tkp="tkProgressBar",
     time="POSIXct"))
 
 
@@ -60,6 +62,10 @@ setMethod(
     .Object@char <- char
     .Object@width <- getConsoleWidth()
     .Object@time <- Sys.time()
+    .Object@isrstudio <- rstudioapi::isAvailable()
+    if(.Object@isrstudio) {
+      .Object@tkp <- tkProgressBar(min=min, max=max)
+    }
     return(.Object)
   })
 
@@ -91,8 +97,12 @@ setMethod(
   "kill",
   signature("ProgressBar"),
   function(x) {
-    cat("\n", file = stderr())
-    flush.console()
+    if(x@isrstudio) {
+      close(x@tkp)
+    } else {
+      cat("\n", file = stderr())
+      flush.console()
+    }
   })
 
 #' Updates `ProgressBar` with `value`
@@ -144,6 +154,7 @@ setGeneric(
 
 
 .update <- function(x, value, label="") {
+  isrstudio <- x@isrstudio
   x@value  <- value
   min <- x@min
   if(value == min) {
@@ -163,6 +174,11 @@ setGeneric(
   } else {
     sprintf("%02i:%02i", as.integer(floor((eta/60) %% 60)),
             as.integer(floor(eta %% 60)))
+  }
+
+  if(isrstudio) {
+    setTkProgressBar(x@tkp, value, title=eta, label=label)
+    return(invisible(x))
   }
   
   if (!is.finite(value) || value < min || value > max)
