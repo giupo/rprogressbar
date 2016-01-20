@@ -146,12 +146,6 @@ setGeneric(
 #' @rdname update-methods
 #' @export
 
-setGeneric(
-  "update",
-  function(x, value, label="") {
-    standardGeneric("update")
-  })
-
 
 .update <- function(x, value, label="") {
   isrstudio <- x@isrstudio
