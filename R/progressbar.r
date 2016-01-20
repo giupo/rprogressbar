@@ -69,8 +69,6 @@ setMethod(
     .Object@isrstudio <- rstudioapi::isAvailable()
     if(.Object@isrstudio) {
       .Object@tkp <- tkProgressBar(min=min, max=max)
-    } else {
-      .Object@tkp <- NULL
     }
     .Object
   })
