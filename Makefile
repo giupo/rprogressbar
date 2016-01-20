@@ -25,7 +25,7 @@ install: $(PKG_NAME)_$(PKG_VERSION).tar.gz
 	R CMD INSTALL $(PKG_NAME)_$(PKG_VERSION).tar.gz
  
 NAMESPACE: $(R_FILES)
-	Rscript -e "devtools::document()"
+	Rscript -e "roxygen2::roxygenize()"
  
 clean:		
 	-rm -f $(PKG_NAME)_*.tar.gz

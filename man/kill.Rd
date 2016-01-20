@@ -4,7 +4,7 @@
 \name{kill}
 \alias{kill}
 \alias{kill,ProgressBar-method}
-\title{Kills current ProgressBar.}
+\title{Kills current ProgressBar}
 \usage{
 kill(x)
 }
@@ -12,6 +12,6 @@ kill(x)
 \item{x}{`ProgressBar` instance}
 }
 \description{
-Kills current ProgressBar.
+Kills current ProgressBar
 }
 

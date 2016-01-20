@@ -2,6 +2,7 @@
 % Please edit documentation in R/progressbar.r
 \docType{methods}
 \name{update}
+\alias{.update}
 \alias{update}
 \title{Updates `ProgressBar` with `value`}
 \usage{

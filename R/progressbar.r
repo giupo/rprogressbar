@@ -24,6 +24,9 @@ getConsoleWidth <- function() {
   }
 }
 
+
+setOldClass("tkProgressBar")
+
 #' Classe S4 per ProgressBar
 #'
 #' @name ProgressBar
@@ -38,7 +41,9 @@ getConsoleWidth <- function() {
 #' @slot time time since the beginning of ProgressBar
 #' @exportClass ProgressBar
 #' @export ProgressBar
-#' @import methods rstudioapi tcltk
+#' @importFrom rstudioapi isAvailable 
+#' @importFrom tcltk tkProgressBar
+#' @importFrom methods getClass setClass
 
 ProgressBar <- setClass(
   "ProgressBar",
@@ -52,7 +57,6 @@ ProgressBar <- setClass(
     tkp="tkProgressBar",
     time="POSIXct"))
 
-
 setMethod(
   "initialize",
   signature("ProgressBar"),
@@ -65,8 +69,10 @@ setMethod(
     .Object@isrstudio <- rstudioapi::isAvailable()
     if(.Object@isrstudio) {
       .Object@tkp <- tkProgressBar(min=min, max=max)
+    } else {
+      .Object@tkp <- NULL
     }
-    return(.Object)
+    .Object
   })
 
 #' Kills current ProgressBar.
@@ -85,7 +91,7 @@ setGeneric(
   })
 
 
-#' Kills current ProgressBar.
+#' Kills current ProgressBar
 #'
 #' @name kill
 #' @usage kill(x)
@@ -199,30 +205,6 @@ setGeneric(
   flush.console()
   invisible(x)  
 }
-
-#' Updates `ProgressBar` with `value`
-#'
-#' `value` has to `min<= value <= max` with `min` and `max` values
-#' of the slots
-#'
-#' `ProgressBar` tries to evaluate an ETA and prints it.
-#' 
-#' @name update
-#' @usage update(x, value, label)
-#' @param x `ProgressBar` instance
-#' @param value current state of the `ProgressBar` to be updated
-#' @param label optional label to be printed with the `ProgressBar`, defaults
-#'        to empty string ("")
-#' @export
-#' @rdname update
-#' @aliases update,ProgressBar,ANY-method
-
-setMethod(
-  "update",
-  signature("ProgressBar", "ANY"),
-  function(x, value, label="") {
-    .update(x, value, label)
-  })
 
 
 #' Updates `ProgressBar` with `value`
