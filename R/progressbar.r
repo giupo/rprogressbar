@@ -148,6 +148,7 @@ setGeneric(
 #'        to empty string ("")
 #' @docType methods
 #' @rdname update-methods
+#' @importFrom tcl setTkProgressBar
 #' @export
 
 
