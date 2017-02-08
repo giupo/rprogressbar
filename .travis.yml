@@ -1,0 +1,29 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+sudo: false
+cache: packages
+
+repos:
+  CRAN: https://cran.rstudio.com
+
+# r_packages:
+#  - covr
+#  - hash
+#  - doMC
+#  - xts
+#  - Rcpp
+#  - stringr
+#  - xlsx
+#  - tis
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install --force-yes libxml2-dev tk8.5
+
+r_github_packages:
+  - jimhester/covr
+  - rstudio/packrat
+
+after_success:
+  - Rscript -e 'library(covr); codecov(line_exclusions=file.path("packrat", list.files(path="packrat", recursive=TRUE)))'

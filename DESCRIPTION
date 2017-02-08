@@ -9,5 +9,9 @@ Imports:
          methods,
          tcltk,
 	 rstudioapi
+Suggests:
+	devtools,
+	roxygen2,
+	testthat
 License: MIT + file LICENSE
 LazyData: true
