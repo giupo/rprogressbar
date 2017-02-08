@@ -16,3 +16,4 @@ scripts
 ^lib_mgt.r
 ^packrat/
 ^\.Rprofile$
+^\.travis.yml$
