@@ -26,4 +26,6 @@ r_github_packages:
   - rstudio/packrat
 
 after_success:
-  - Rscript -e 'library(covr); codecov(line_exclusions=file.path("packrat", list.files(path="packrat", recursive=TRUE)))'
+  - Rscript -e 'packrat::restore()'
+  - Rscript -e 'devtools::test()'
+#  - Rscript -e 'covr::codecov(line_exclusions=file.path("packrat", list.files(path="packrat", recursive=T)))'

@@ -6,7 +6,6 @@
 *~
 *.Rout
 *.Rcheck
-\.Rprofile
 *.tar.gz
 [#]*[#]
 .[#]*
