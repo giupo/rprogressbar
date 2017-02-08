@@ -140,8 +140,8 @@ setGeneric(
 #'
 #' `ProgressBar` tries to evaluate an ETA and prints it.
 #' 
-#' @name update
-#' @usage update(x, value, label)
+#' @name .update
+#' @usage .update(x, value, label)
 #' @param x `ProgressBar` instance
 #' @param value current state of the `ProgressBar` to be updated
 #' @param label optional label to be printed with the `ProgressBar`, defaults
@@ -214,6 +214,7 @@ setGeneric(
 #' `ProgressBar` tries to evaluate an ETA and prints it.
 #' 
 #' @name updateProgressBar
+#' @usage updateProgressBar(x, value)
 #' @usage updateProgressBar(x, value, label)
 #' @param x `ProgressBar` instance
 #' @param value current state of the `ProgressBar` to be updated
@@ -221,7 +222,6 @@ setGeneric(
 #'        to empty string ("")
 #' @export
 #' @rdname updateProgressBar
-#' @aliases updateProgressBar,ProgressBar,ANY-method
 
 setMethod(
   "updateProgressBar",
