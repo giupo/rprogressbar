@@ -6,9 +6,8 @@ Description: provides a basic progress bar with an ETA and a label.
 Depends: 
          R (>= 2.14.1)
 Imports:
-         methods,
+   methods,
 	 utils,
-         tcltk,
 	 rstudioapi
 Suggests:
 	devtools,

@@ -44,7 +44,6 @@ setOldClass("tkProgressBar")
 #' @exportClass ProgressBar
 #' @export ProgressBar
 #' @importFrom rstudioapi isAvailable 
-#' @importFrom tcltk tkProgressBar
 #' @importFrom methods getClass setClass new
 
 ProgressBar <- setClass(
@@ -69,7 +68,7 @@ setMethod(
     .Object@width <- getConsoleWidth()
     .Object@time <- Sys.time()
     .Object@isrstudio <- isAvailable()
-    if(.Object@isrstudio) {
+    if(.Object@isrstudio && require(tcltk)) {
       .Object@tkp <- tkProgressBar(min=min, max=max)
     }
     .Object
@@ -130,8 +129,6 @@ setGeneric(
   })
 
 
-#' @importFrom tcltk setTkProgressBar
-
 .update <- function(x, value, label="") {
   isrstudio <- x@isrstudio
   x@value  <- value
@@ -155,7 +152,7 @@ setGeneric(
             as.integer(floor(eta %% 60)))
   }
 
-  if(isrstudio) {
+  if(isrstudio && require(tcltk)) {
     setTkProgressBar(x@tkp, value, title=eta, label=label)
     return(invisible(x))
   }
