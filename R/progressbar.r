@@ -165,8 +165,16 @@ setGeneric(
   pad <- 12 + nchar(eta)
   nlabel <- nchar(label)
   width <- trunc(x@width/nw) - pad - nlabel
-  nb <- round(width * (value - min)/(max - min))
-  pc <- round(100 * (value - min)/(max - min))
+
+  den <- max - min
+  den <- if (den == 0) {
+    1
+  } else {
+    den
+  }
+  
+  nb <- round(width * (value - min)/den)
+  pc <- round(100 * (value - min)/den)
   if(nlabel > 0) {
     cat(paste(c("\r |", rep.int(char, nb),
                   rep.int(" ", nw * (width - nb)),
