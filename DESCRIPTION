@@ -7,8 +7,7 @@ Depends:
          R (>= 2.14.1)
 Imports:
    methods,
-	 utils,
-	 rstudioapi
+   utils,
 Suggests:
 	devtools,
 	roxygen2,

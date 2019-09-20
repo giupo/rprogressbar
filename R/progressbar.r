@@ -7,7 +7,7 @@ getConsoleWidth <- function() {
   if(is.numeric(width)) {
     width
   } else {
-    os <- .Platform$OS.type  
+    os <- .Platform$OS.type
     if ( os  %in% c("unix", "Darwin" )) {
       as.numeric(system('tput cols', intern=TRUE))
     } else {
@@ -25,8 +25,6 @@ getConsoleWidth <- function() {
 }
 
 
-setOldClass("tkProgressBar")
-
 #' Classe S4 per ProgressBar
 #'
 #' @name ProgressBar
@@ -39,23 +37,18 @@ setOldClass("tkProgressBar")
 #' @slot char char to use as token for progress
 #' @slot width current screen width, autoevaluated
 #' @slot time time since the beginning of ProgressBar
-#' @slot isrstudio boolean value to check if we are in RStudio
-#' @slot tkp if we are in RStudio, we delegate all to Tcl/Tk for the progressbar
 #' @exportClass ProgressBar
 #' @export ProgressBar
-#' @importFrom rstudioapi isAvailable 
 #' @importFrom methods getClass setClass new
 
 ProgressBar <- setClass(
   "ProgressBar",
   representation(
     value= "numeric",
-    min="numeric",                        
+    min="numeric",
     max="numeric",
     char="character",
     width="numeric",
-    isrstudio="logical",
-    tkp="tkProgressBar",
     time="POSIXct"))
 
 setMethod(
@@ -67,10 +60,7 @@ setMethod(
     .Object@char <- char
     .Object@width <- getConsoleWidth()
     .Object@time <- Sys.time()
-    .Object@isrstudio <- isAvailable()
-    if(.Object@isrstudio && require(tcltk)) {
-      .Object@tkp <- tkProgressBar(min=min, max=max)
-    }
+
     .Object
   })
 
@@ -97,12 +87,8 @@ setMethod(
   "kill",
   signature("ProgressBar"),
   function(x) {
-    if(x@isrstudio) {
-      close(x@tkp)
-    } else {
-      cat("\n", file = stderr())
-      flush.console()
-    }
+    cat("\n", file = stderr())
+    flush.console()
   })
 
 #' Updates `ProgressBar` with `value`
@@ -130,12 +116,11 @@ setGeneric(
 
 
 .update <- function(x, value, label="") {
-  isrstudio <- x@isrstudio
   x@value  <- value
   min <- x@min
   if(value == min) {
     x@time <- Sys.time()
-  }    
+  }
   max <- x@max
   char <- x@char
   elapsed <- as.numeric(difftime(Sys.time(),  x@time, units="secs"))
@@ -152,15 +137,10 @@ setGeneric(
             as.integer(floor(eta %% 60)))
   }
 
-  if(isrstudio && require(tcltk)) {
-    setTkProgressBar(x@tkp, value, title=eta, label=label)
-    return(invisible(x))
-  }
-  
   if (!is.finite(value) || value < min || value > max) {
     return()
   }
-  
+
   nw <- nchar(char,"w")
   pad <- 12 + nchar(eta)
   nlabel <- nchar(label)
@@ -172,7 +152,7 @@ setGeneric(
   } else {
     den
   }
-  
+
   nb <- round(width * (value - min)/den)
   pc <- round(100 * (value - min)/den)
   if(nlabel > 0) {
@@ -185,10 +165,10 @@ setGeneric(
                 rep.int(" ", nw * (width - nb)),
                 sprintf("| %3d%% %s", pc, eta)), collapse = ""),
         file = stderr())
-    
+
   }
   flush.console()
-  invisible(x)  
+  invisible(x)
 }
 
 #' @rdname updateProgressBar
