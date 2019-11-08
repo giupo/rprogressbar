@@ -22,9 +22,5 @@ Classe S4 per ProgressBar
 \item{\code{width}}{current screen width, autoevaluated}
 
 \item{\code{time}}{time since the beginning of ProgressBar}
-
-\item{\code{isrstudio}}{boolean value to check if we are in RStudio}
-
-\item{\code{tkp}}{if we are in RStudio, we delegate all to Tcl/Tk for the progressbar}
 }}
 
